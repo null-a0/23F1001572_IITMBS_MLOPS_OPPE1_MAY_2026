@@ -38,7 +38,6 @@ jobs:
       - name: Verify Authentication
         run: |
           gcloud auth list
-          gcloud config list
 
       - name: Install Dependencies
         run: |
@@ -53,9 +52,9 @@ jobs:
         run: |
           dvc pull
 
-      - name: Train Model (Iteration 2)
+      - name: Hyperparameter Tuning (Iteration 2)
         run: |
-          python src/train.py --iteration 2
+          python src/hyperparameter_tuning.py --iteration 2
 
       - name: Evaluate Model
         run: |
