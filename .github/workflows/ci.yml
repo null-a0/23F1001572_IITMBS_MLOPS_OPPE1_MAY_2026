@@ -2,10 +2,11 @@ name: Stock Movement CI
 
 on:
   push:
-    branches: [main]
-
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   evaluate:
@@ -20,19 +21,21 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Show Python Version
+        run: |
+          python --version
+          pip --version
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Check gcloud
+      - name: Verify DVC
         run: |
-          gcloud version
+          dvc version
 
-      - name: Pull Data from DVC
+      - name: Pull Data
         run: |
           dvc pull
 
@@ -40,21 +43,12 @@ jobs:
         run: |
           pytest tests/ -v
 
-      - name: Evaluate Best Model
+      - name: Evaluate Model
         run: |
           python src/evaluate.py
 
-      - name: Upload Report
+      - name: Upload Evaluation Report
         uses: actions/upload-artifact@v4
         with:
           name: evaluation-report
           path: report.md
-
-      - name: Setup CML
-        uses: iterative/setup-cml@v2
-
-      - name: Publish CML Report
-        env:
-          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cml comment create report.md
