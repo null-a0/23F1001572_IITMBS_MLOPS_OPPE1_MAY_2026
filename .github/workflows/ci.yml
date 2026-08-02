@@ -1,0 +1,60 @@
+name: Stock Movement CI
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Check gcloud
+        run: |
+          gcloud version
+
+      - name: Pull Data from DVC
+        run: |
+          dvc pull
+
+      - name: Run Feature Tests
+        run: |
+          pytest tests/ -v
+
+      - name: Evaluate Best Model
+        run: |
+          python src/evaluate.py
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-report
+          path: report.md
+
+      - name: Setup CML
+        uses: iterative/setup-cml@v2
+
+      - name: Publish CML Report
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cml comment create report.md
