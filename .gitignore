@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editor files
+*.swp
+*.swo
+*.tmp
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Models
+models/*.pkl
+models/*.joblib
+
+# Feast generated files
+feature_repo/feature_repo/data/registry.db
+feature_repo/feature_repo/data/online_store.db
+
+# DVC cache
+.dvc/cache/
+
+# Logs
+*.log
